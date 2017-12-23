@@ -17,5 +17,8 @@ UINT initialize_block (struct Block *, CCHAR *, INT, INT);
 BOOL is_in_collision(struct Player, UINT, UINT);
 
 /* REPLACE THE PLAYER - COLLISION */
-VOID replace_player (struct Player *, struct Block);
+VOID replace_player (struct Player *);
+
+/* REPLACE THE PLAYER IF HE COLLIDE A BLOCK */
+VOID replace_player_block( struct Player *, struct Block );
 

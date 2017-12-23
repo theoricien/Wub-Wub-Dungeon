@@ -24,7 +24,7 @@ INT main (INT argc, CHAR **argv)
     initialize_hitbox(&tmp_hitbox, sdl_r(0,0), true);
     initialize_entity(&background,"background.png",WIDTH,HEIGHT,WIDTH,HEIGHT,HORIZONTAL,0,tmp_hitbox);
 
-    BLOCK *block;
+    BLOCK block[2];
     initialize_block(&block[0], "block.png", 5, 3);
     initialize_block(&block[1], "block.png", 6, 3);
 
@@ -48,47 +48,41 @@ INT main (INT argc, CHAR **argv)
         /* IF SOME KEYS ARE PRESSED */
         if (keyStates[SDLK_UP] && keyStates[SDLK_RIGHT])
         {
-            if (is_in_collision(player,23,42))
-                up_right(&player);
+            up_right(&player);
         }
         else if (keyStates[SDLK_UP] && keyStates[SDLK_LEFT])
         {
-            if (is_in_collision(player,23,42))
-                up_left(&player);
+            up_left(&player);
         }
         else if (keyStates[SDLK_DOWN] && keyStates[SDLK_LEFT])
         {
-            if (is_in_collision(player,23,42))
-                down_left(&player);
+            down_left(&player);
         }
         else if (keyStates[SDLK_DOWN] && keyStates[SDLK_RIGHT])
         {
-            if (is_in_collision(player,23,42))
-                down_right(&player);
+            down_right(&player);
         }
         else if (keyStates[SDLK_UP])
         {
-            if (is_in_collision(player,23,42))
-                up(&player);
+            up(&player);
         }
         else if (keyStates[SDLK_DOWN])
         {
-            if (is_in_collision(player,23,42))
-                down(&player);
+            down(&player);
         }
         else if (keyStates[SDLK_RIGHT])
         {
-            if (is_in_collision(player,23,42))
-                right(&player);
+            right(&player);
         }
         else if (keyStates[SDLK_LEFT])
         {
-            if (is_in_collision(player,23,42))
-                left(&player);
+            left(&player);
         }
 
         /* REPLACE OUR PLAYER IF HE IS OUT OF THE BORDERS */
-        replace_player(&player, &block);
+        replace_player(&player);
+        replace_player_block(&player, block[0]);
+        replace_player_block(&player, block[1]);
         /* DRAW */
         SDL_FillRect(s_screen, 0, SDL_MapRGB((*s_screen).format, 0, 0, 0)); // BLACK BACKGROUND
         /* BLIT ALL YOUR SURFACE HERE */

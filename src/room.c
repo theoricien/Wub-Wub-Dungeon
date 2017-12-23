@@ -28,7 +28,7 @@ BOOL is_in_collision (struct Player p, UINT a, UINT b)
 }
 
 
-VOID replace_player (struct Player *p, struct Block *b)
+VOID replace_player (struct Player *p)
 {
     /* SQUARE:
     *  x=23         y=0         (top left)
@@ -56,36 +56,57 @@ VOID replace_player (struct Player *p, struct Block *b)
     {
         (*p).entity.hitbox.hitbox.y = HEIGHT - 42 - (*p).entity.height;
     }
+}
 
+VOID replace_player_block( struct Player *p, struct Block b)
+{
     /* BLOCK SIDE */
-    for (INT i = 0; i < 2; i++)
+    /* LEFT SIDE */
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + SPEED_PLAYER &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y + SPEED_PLAYER && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
     {
-        /* LEFT SIDE */
-        if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > (*b[i]).hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= (*b[i]).hitbox.hitbox.x + SPEED_PLAYER &&
-            (*p).entity.hitbox.hitbox.y + (*p).entity.height + SPEED_PLAYER > (*b[i]).hitbox.hitbox.y && (*p).entity.hitbox.hitbox.y - SPEED_PLAYER <= (*b[i]).hitbox.hitbox.y + BLOCK_HEIGHT/2)
-        {
-            (*p).entity.hitbox.hitbox.x -= SPEED_PLAYER;
-        }
+        (*p).entity.hitbox.hitbox.x -= SPEED_PLAYER;
+    }
 
-        /* RIGHT SIDE */
-        if ((*p).entity.hitbox.hitbox.x < (*b[i]).hitbox.hitbox.x + BLOCK_WIDTH && (*p).entity.hitbox.hitbox.x >= (*b[i]).hitbox.hitbox.x + BLOCK_WIDTH - SPEED_PLAYER &&
-            (*p).entity.hitbox.hitbox.y + (*p).entity.height + SPEED_PLAYER > (*b[i]).hitbox.hitbox.y && (*p).entity.hitbox.hitbox.y - SPEED_PLAYER <= (*b[i]).hitbox.hitbox.y + BLOCK_HEIGHT/2)
-        {
-            (*p).entity.hitbox.hitbox.x += SPEED_PLAYER;
-        }
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
+    {
+        (*p).entity.hitbox.hitbox.x -= SPEED_PLAYER_D;
+    }
+    /* RIGHT SIDE */
+    if ((*p).entity.hitbox.hitbox.x >= b.hitbox.hitbox.x + BLOCK_WIDTH - SPEED_PLAYER && (*p).entity.hitbox.hitbox.x < b.hitbox.hitbox.x + BLOCK_WIDTH - SPEED_PLAYER_D &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
+    {
+        (*p).entity.hitbox.hitbox.x += SPEED_PLAYER;
+    }
 
-        /* TOP SIDE */
-        if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > (*b[i]).hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= (*b[i]).hitbox.hitbox.x + BLOCK_WIDTH &&
-            (*p).entity.hitbox.hitbox.y + (*p).entity.height >= (*b[i]).hitbox.hitbox.y && (*p).entity.hitbox.hitbox.y + (*p).entity.height <= (*b[i]).hitbox.hitbox.y + SPEED_PLAYER)
-        {
-            (*p).entity.hitbox.hitbox.y -= SPEED_PLAYER;
-        }
+    if ((*p).entity.hitbox.hitbox.x >= b.hitbox.hitbox.x + BLOCK_WIDTH - SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.x < b.hitbox.hitbox.x + BLOCK_WIDTH &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
+    {
+        (*p).entity.hitbox.hitbox.x += SPEED_PLAYER_D;
+    }
+    /* TOP SIDE */
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.y + (*p).entity.height <= b.hitbox.hitbox.y + SPEED_PLAYER)
+    {
+        (*p).entity.hitbox.hitbox.y -= SPEED_PLAYER;
+    }
 
-        /* BOT SIDE */
-        if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > (*b[i]).hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= (*b[i]).hitbox.hitbox.x + BLOCK_WIDTH &&
-            (*p).entity.hitbox.hitbox.y >= (*b[i]).hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER && (*p).entity.hitbox.hitbox.y <= (*b[i]).hitbox.hitbox.y + BLOCK_HEIGHT/2)
-        {
-            (*p).entity.hitbox.hitbox.y += SPEED_PLAYER;
-        }
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
+        (*p).entity.hitbox.hitbox.y + (*p).entity.height > b.hitbox.hitbox.y && (*p).entity.hitbox.hitbox.y + (*p).entity.height <= b.hitbox.hitbox.y + SPEED_PLAYER_D)
+    {
+        (*p).entity.hitbox.hitbox.y -= SPEED_PLAYER_D;
+    }
+    /* BOT SIDE */
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
+        (*p).entity.hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
+    {
+        (*p).entity.hitbox.hitbox.y += SPEED_PLAYER;
+    }
+
+    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
+        (*p).entity.hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2)
+    {
+        (*p).entity.hitbox.hitbox.y += SPEED_PLAYER_D;
     }
 }
