@@ -31,6 +31,7 @@ typedef struct Entity
 typedef struct Player
 {
     ENTITY entity;
+    UINT health;
     /*
     * TODO: include attack and others
     */
@@ -78,6 +79,7 @@ UINT initialize_entity (struct Entity *e, CCHAR *s, UINT w, UINT h, UINT t_w, UI
 UINT initialize_player (struct Player *p, ENTITY e)
 {
     (*p).entity = e;
+    (*p).health = NB_HEARTS; /* 3 HP */
     return 0;
 }
 

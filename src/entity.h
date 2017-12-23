@@ -31,6 +31,7 @@ typedef struct Entity
 typedef struct Player
 {
     ENTITY entity;
+    UINT health;
 } PLAYER;
 
 /* TAKE THE NEXT SPRITE */

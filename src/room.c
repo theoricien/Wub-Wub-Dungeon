@@ -60,6 +60,9 @@ VOID replace_player (struct Player *p)
 
 VOID replace_player_block( struct Player *p, struct Block b)
 {
+    /* FIRST IF: CLASSIC MOVEMENT (UP,RIGHT,LEFT,DOWN) */
+    /* SECOND IF: DIAGONAL MOVEMENT */
+
     /* BLOCK SIDE */
     /* LEFT SIDE */
     if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > b.hitbox.hitbox.x + SPEED_PLAYER_D && (*p).entity.hitbox.hitbox.x <= b.hitbox.hitbox.x + SPEED_PLAYER &&

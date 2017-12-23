@@ -7,3 +7,5 @@
 #define SPEED_PLAYER_D 3*SPEED_PLAYER/4
 #define BLOCK_WIDTH 92
 #define BLOCK_HEIGHT 64
+#define NB_HEARTS 3
+#define HEART_SIZE 50
