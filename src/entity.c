@@ -36,7 +36,8 @@ typedef struct Player
     */
 } PLAYER;
 
-VOID next_sprite (ENTITY *e)
+
+VOID next_sprite (struct Entity *e)
 {
     if ((*e).direction == HORIZONTAL)
     {
@@ -52,7 +53,7 @@ VOID next_sprite (ENTITY *e)
     }
 }
 
-UINT initialize_hitbox (HITBOX *h, SDL_Rect r, BOOL w)
+UINT initialize_hitbox (struct Hitbox *h, SDL_Rect r, BOOL w)
 {
     (*h).hitbox = r;
     (*h).is_walkable = w;
@@ -141,45 +142,13 @@ UINT down_left (struct Player *p)
     return 0;
 }
 
-BOOL is_player_in_rect (struct Player p, UINT x, UINT y)
+BOOL is_player_in_rect (struct Player p, UINT a, UINT b)
 {
-    if (p.entity.hitbox.hitbox.x >= x && p.entity.hitbox.hitbox.x + p.entity.width <= WIDTH - x)
+    if (p.entity.hitbox.hitbox.x >= a && p.entity.hitbox.hitbox.x + p.entity.width <= WIDTH - a &&
+        p.entity.hitbox.hitbox.y >= 0 && p.entity.hitbox.hitbox.y + p.entity.height <= HEIGHT - b)
     {
-        if (p.entity.hitbox.hitbox.y >= 0 && p.entity.hitbox.hitbox.y + p.entity.height <= HEIGHT - y)
-        {
-            return true;
-        }
+        return true;
     }
     return false;
-}
-
-VOID replace_player (struct Player *p)
-{
-    /* SQUARE:
-    *  x=23         y=0         (top left)
-    *  x=WIDTH-23   y=0         (top right)
-    *  x=23         y=HEIGHT-42 (bot left)
-    *  x=WIDTH-23   y=HEIGHT-42 (bot right)
-    */
-
-    /* X SIDE */
-    if ((*p).entity.hitbox.hitbox.x < 23)
-    {
-        (*p).entity.hitbox.hitbox.x = 23;
-    }
-    if ((*p).entity.hitbox.hitbox.x + (*p).entity.width > WIDTH - 23)
-    {
-        (*p).entity.hitbox.hitbox.x = WIDTH - 23 - (*p).entity.width;
-    }
-
-    /* Y SIDE */
-    if ((*p).entity.hitbox.hitbox.y < 0)
-    {
-        (*p).entity.hitbox.hitbox.y = 0;
-    }
-    if ((*p).entity.hitbox.hitbox.y + (*p).entity.height > HEIGHT - 42)
-    {
-        (*p).entity.hitbox.hitbox.y = HEIGHT - 42 - (*p).entity.height;
-    }
 }
 

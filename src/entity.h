@@ -31,12 +31,6 @@ typedef struct Entity
 typedef struct Player
 {
     ENTITY entity;
-    UINT x;
-    UINT y;
-    UINT (*up)(struct Player*);
-    UINT (*down)(struct Player*);
-    UINT (*left)(struct Player*);
-    UINT (*right)(struct Player*);
 } PLAYER;
 
 /* TAKE THE NEXT SPRITE */
@@ -66,6 +60,3 @@ UINT down_left (struct Player *);
 
 /* IS THE PLAYER IN THE ROOM */
 BOOL is_player_in_rect (struct Player, UINT, UINT);
-
-/* REPLACE THE PLAYER - COLLISION */
-VOID replace_player (struct Player *);
