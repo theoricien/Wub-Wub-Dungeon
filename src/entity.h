@@ -4,6 +4,14 @@
 
 typedef enum
 {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+} LOOKAT;
+
+typedef enum
+{
     HORIZONTAL,
     VERTICAL
 } DIRECTION;
@@ -11,7 +19,6 @@ typedef enum
 typedef struct Hitbox
 {
     SDL_Rect hitbox;
-    BOOL is_walkable;
 } HITBOX;
 
 typedef struct Entity
@@ -23,28 +30,39 @@ typedef struct Entity
     UINT total_width;
     UINT total_height;
     DIRECTION direction;
+    LOOKAT lookat;
     UINT index;
     HITBOX hitbox;
 
 } ENTITY;
 
+typedef struct Weapon
+{
+    ENTITY entity;
+    BOOL is_created;
+} WEAPON;
+
 typedef struct Player
 {
     ENTITY entity;
     UINT health;
+    WEAPON *weapons;
 } PLAYER;
 
 /* TAKE THE NEXT SPRITE */
-VOID next_sprite (struct Entity*);
+SDL_Rect next_sprite (struct Entity, LOOKAT);
 
 /* INITIALIZE A HITBOX */
-UINT initialize_hitbox (struct Hitbox *, SDL_Rect, BOOL);
+UINT initialize_hitbox (struct Hitbox *, SDL_Rect);
 
 /* INITIALIZE AN ENTITY */
 UINT initialize_entity (struct Entity *, CCHAR *, UINT, UINT, UINT, UINT, DIRECTION, UINT, struct Hitbox);
 
 /* INITIALIZE A PLAYER */
-UINT initialize_player (struct Player *, struct Entity);
+UINT initialize_player (struct Player *, struct Entity, struct Weapon *);
+
+/* INITIALIZE A WEAPON */
+UINT initialize_weapon(struct Weapon *, struct Entity);
 
 /* SHORTCUT TO RETURN A SIMPLE SDL_Rect */
 SDL_Rect sdl_r (UINT, UINT);

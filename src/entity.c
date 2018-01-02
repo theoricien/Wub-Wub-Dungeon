@@ -19,7 +19,6 @@ typedef enum
 typedef struct Hitbox
 {
     SDL_Rect hitbox;
-    BOOL is_walkable;
 } HITBOX;
 
 typedef struct Entity
@@ -31,6 +30,7 @@ typedef struct Entity
     UINT total_width;
     UINT total_height;
     DIRECTION direction;
+    LOOKAT lookat;
     UINT index;
     HITBOX hitbox;
 
@@ -40,7 +40,6 @@ typedef struct Weapon
 {
     ENTITY entity;
     BOOL is_created;
-    UINT speed;
 } WEAPON;
 
 typedef struct Player
@@ -71,10 +70,9 @@ SDL_Rect next_sprite (struct Entity e, LOOKAT index)
     return r;
 }
 
-UINT initialize_hitbox (struct Hitbox *h, SDL_Rect r, BOOL w)
+UINT initialize_hitbox (struct Hitbox *h, SDL_Rect r)
 {
     (*h).hitbox = r;
-    (*h).is_walkable = w;
     return 0;
 }
 
@@ -88,6 +86,7 @@ UINT initialize_entity (struct Entity *e, CCHAR *s, UINT w, UINT h, UINT t_w, UI
     (*e).total_width = t_w;
     (*e).total_height = t_h;
     (*e).direction = d;
+    (*e).lookat = DOWN;
     (*e).index = i;
     (*e).hitbox = hb;
     return 0;
@@ -105,7 +104,6 @@ UINT initialize_weapon(struct Weapon *w, ENTITY e)
 {
     (*w).entity = e;
     (*w).is_created = false;
-    (*w).speed = PROJECTILE_SPEED;
     return 0;
 }
 
@@ -170,13 +168,12 @@ UINT down_left (struct Player *p)
     return 0;
 }
 
-BOOL is_player_in_rect (struct Player p, UINT a, UINT b)
+BOOL is_player_in_rect (struct Entity e, UINT a, UINT b)
 {
-    if (p.entity.hitbox.hitbox.x >= a && p.entity.hitbox.hitbox.x + p.entity.width <= WIDTH - a &&
-        p.entity.hitbox.hitbox.y >= 0 && p.entity.hitbox.hitbox.y + p.entity.height <= HEIGHT - b)
+    if (e.hitbox.hitbox.x >= a && e.hitbox.hitbox.x + e.width <= WIDTH - a &&
+        e.hitbox.hitbox.y >= 0 && e.hitbox.hitbox.y + e.height <= HEIGHT - b)
     {
         return true;
     }
     return false;
 }
-
