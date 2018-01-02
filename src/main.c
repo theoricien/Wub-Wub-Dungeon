@@ -19,9 +19,16 @@ INT main (INT argc, CHAR **argv)
     BOOL loose = false;
 
     PLAYER player;
+    LOOKAT direction;
+    /* LIST CONCEPT IS BULLSHIT WHEN YOU HAVE MATHS */
+    UINT d = PROJECTILE_SPEED/PROJECTILE_LATENCY;
+    UINT nb_possible_projectile = d/WIDTH;
+    WEAPON projectiles[nb_possible_projectile];
+    SDL_Rect player_direction;
+    direction = DOWN;
     initialize_hitbox(&tmp_hitbox, sdl_r(300, 400), true);
-    initialize_entity(&tmp_entity,"player.png",55,86,55,86,HORIZONTAL,0,tmp_hitbox);
-    initialize_player(&player,tmp_entity);
+    initialize_entity(&tmp_entity,"player.png",55,86,220,86,HORIZONTAL,0,tmp_hitbox);
+    initialize_player(&player,tmp_entity,projectiles);
 
     ENTITY background;
     initialize_hitbox(&tmp_hitbox, sdl_r(0,0), true);
@@ -45,9 +52,9 @@ INT main (INT argc, CHAR **argv)
 
     /* MAIN LOOP */
     BOOL b = false;
+    UINT curr_time = SDL_GetTicks();
     while (!b)
     {
-
         /* EVENT GESTION */
         SDL_Event event;
         SDL_PollEvent(&event);
@@ -61,43 +68,67 @@ INT main (INT argc, CHAR **argv)
         /* KEYBOARD VALUES */
         keyStates = SDL_GetKeyState(NULL);
 
-        /* IF SOME KEYS ARE PRESSED */
-        if (keyStates[SDLK_UP] && keyStates[SDLK_RIGHT])
+        /* IF YOU DON'T LOOSE */
+        if (loose == false)
         {
-            up_right(&player);
-        }
-        else if (keyStates[SDLK_UP] && keyStates[SDLK_LEFT])
-        {
-            up_left(&player);
-        }
-        else if (keyStates[SDLK_DOWN] && keyStates[SDLK_LEFT])
-        {
-            down_left(&player);
-        }
-        else if (keyStates[SDLK_DOWN] && keyStates[SDLK_RIGHT])
-        {
-            down_right(&player);
-        }
-        else if (keyStates[SDLK_UP])
-        {
-            up(&player);
-        }
-        else if (keyStates[SDLK_DOWN])
-        {
-            down(&player);
-        }
-        else if (keyStates[SDLK_RIGHT])
-        {
-            right(&player);
-        }
-        else if (keyStates[SDLK_LEFT])
-        {
-            left(&player);
-        }
-        else if (old_keyStates[SDLK_SPACE] == 0 && keyStates[SDLK_SPACE] == 1) /* TEMPORARY FOR LOOSING HEALTH WITHOUT ENEMY */
-        {
-            player.health -= 1;
-            return 5;
+            /* IF SOME KEYS ARE PRESSED */
+            if (keyStates[SDLK_w] && keyStates[SDLK_d])
+            {
+                up_right(&player);
+                direction = UP;
+            }
+            else if (keyStates[SDLK_w] && keyStates[SDLK_a])
+            {
+                up_left(&player);
+                direction = LEFT;
+            }
+            else if (keyStates[SDLK_s] && keyStates[SDLK_a])
+            {
+                down_left(&player);
+                direction = DOWN;
+            }
+            else if (keyStates[SDLK_s] && keyStates[SDLK_d])
+            {
+                down_right(&player);
+                direction = RIGHT;
+            }
+            else if (keyStates[SDLK_w])
+            {
+                up(&player);
+                direction = UP;
+            }
+            else if (keyStates[SDLK_s])
+            {
+                down(&player);
+                direction = DOWN;
+            }
+            else if (keyStates[SDLK_d])
+            {
+                right(&player);
+                direction = RIGHT;
+            }
+            else if (keyStates[SDLK_a])
+            {
+                left(&player);
+                direction = LEFT;
+            }
+            /* PROJECTILE KEYS */
+            if (keyStates[SDLK_UP])
+            {
+                direction = UP;
+            }
+            if (keyStates[SDLK_LEFT])
+            {
+                direction = LEFT;
+            }
+            if (keyStates[SDLK_DOWN])
+            {
+                direction = DOWN;
+            }
+            if (keyStates[SDLK_RIGHT])
+            {
+                direction = RIGHT;
+            }
         }
 
         /* IF HE LOOSES */
@@ -113,23 +144,29 @@ INT main (INT argc, CHAR **argv)
         /* DRAW */
         SDL_FillRect(s_screen, 0, SDL_MapRGB((*s_screen).format, 0, 0, 0)); // BLACK BACKGROUND
         /* BLIT ALL YOUR SURFACE HERE */
-        if (loose == false)
-            SDL_BlitSurface(background.surface, 0, s_screen, &background.hitbox.hitbox);
-        else
-            SDL_BlitSurface(loose_background.surface, 0, s_screen, &loose_background.hitbox.hitbox);
+        SDL_BlitSurface(background.surface, 0, s_screen, &background.hitbox.hitbox);
         SDL_BlitSurface(block[0].surface, 0, s_screen, &block[0].hitbox.hitbox);
         SDL_BlitSurface(block[1].surface, 0, s_screen, &block[1].hitbox.hitbox);
+        if (loose == true)
+            SDL_BlitSurface(loose_background.surface, 0, s_screen, &loose_background.hitbox.hitbox);
+        player_direction = next_sprite(player.entity, direction);
+        SDL_BlitSurface(player.entity.surface, &player_direction, s_screen, &player.entity.hitbox.hitbox);
         for (UINT i = 0; i < NB_HEARTS; i++)
             SDL_BlitSurface(empty_heart[i].surface, 0, s_screen, &empty_heart[i].hitbox.hitbox);
         for (UINT i = 0; i < player.health; i++)
             SDL_BlitSurface(full_heart[i].surface, 0, s_screen, &full_heart[i].hitbox.hitbox);
-        SDL_BlitSurface(player.entity.surface, 0, s_screen, &player.entity.hitbox.hitbox);
         /* REFRESH OUR SCREEN */
         SDL_Flip(s_screen);
 
         /* OLD KEYBOARD VALUE SAVED */
         for (UINT i = 0; keyStates[i]; i++)
             old_keyStates[i] = keyStates[i];
+
+        if (curr_time + SDL_GetTicks() > FRAME_PER_SECOND)
+        {
+            SDL_Delay(FRAME_PER_SECOND);
+            curr_time = SDL_GetTicks();
+        }
     }
     /* FREE ALL OF OUR STUFF HERE */
     SDL_FreeSurface(player.entity.surface);

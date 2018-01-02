@@ -4,6 +4,14 @@
 
 typedef enum
 {
+    DOWN = 0,
+    LEFT = 1,
+    RIGHT = 2,
+    UP = 3
+} LOOKAT;
+
+typedef enum
+{
     HORIZONTAL,
     VERTICAL
 } DIRECTION;
@@ -28,30 +36,39 @@ typedef struct Entity
 
 } ENTITY;
 
+typedef struct Weapon
+{
+    ENTITY entity;
+    BOOL is_created;
+    UINT speed;
+} WEAPON;
+
 typedef struct Player
 {
     ENTITY entity;
     UINT health;
-    /*
-    * TODO: include attack and others
-    */
+    WEAPON *weapons;
 } PLAYER;
 
 
-VOID next_sprite (struct Entity *e)
+SDL_Rect next_sprite (struct Entity e, LOOKAT index)
 {
-    if ((*e).direction == HORIZONTAL)
+    SDL_Rect r;
+    if (e.direction == HORIZONTAL)
     {
-        (*e).width *= 2;
-        (*e).width %= (*e).total_width;
-        (*e).index = ((*e).index + 1) % (UINT)((*e).total_width / (*e).width);
+        r.x = e.width * index;
+        r.y = 0;
+        r.w = e.width;
+        r.h = e.total_height;
     }
     else
     {
-        (*e).height *= 2;
-        (*e).height %= (*e).total_height;
-        (*e).index = ((*e).index + 1) % (UINT)((*e).total_height / (*e).height);
+        r.x = 0;
+        r.y = (e.height * index) % e.total_height;
+        r.w = e.total_width;
+        r.h = e.height;
     }
+    return r;
 }
 
 UINT initialize_hitbox (struct Hitbox *h, SDL_Rect r, BOOL w)
@@ -76,10 +93,19 @@ UINT initialize_entity (struct Entity *e, CCHAR *s, UINT w, UINT h, UINT t_w, UI
     return 0;
 }
 
-UINT initialize_player (struct Player *p, ENTITY e)
+UINT initialize_player (struct Player *p, ENTITY e, WEAPON *w)
 {
     (*p).entity = e;
+    (*p).weapons = w;
     (*p).health = NB_HEARTS; /* 3 HP */
+    return 0;
+}
+
+UINT initialize_weapon(struct Weapon *w, ENTITY e)
+{
+    (*w).entity = e;
+    (*w).is_created = false;
+    (*w).speed = PROJECTILE_SPEED;
     return 0;
 }
 
