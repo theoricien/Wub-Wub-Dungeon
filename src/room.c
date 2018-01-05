@@ -100,34 +100,47 @@ BOOL replace_entity_block (struct Entity *p, struct Block b)
         res = true;
     }
     /* TOP SIDE */
-    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
-        (*p).hitbox.hitbox.y + (*p).height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).hitbox.hitbox.y + (*p).height <= b.hitbox.hitbox.y + SPEED_PLAYER)
+    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH)
     {
-        (*p).hitbox.hitbox.y -= SPEED_PLAYER;
-        res = true;
-    }
+        if ((*p).hitbox.hitbox.y + (*p).height > b.hitbox.hitbox.y + SPEED_PLAYER_D && (*p).hitbox.hitbox.y + (*p).height <= b.hitbox.hitbox.y + SPEED_PLAYER)
+        {
+            (*p).hitbox.hitbox.y -= SPEED_PLAYER;
+            res = true;
+        }
 
-    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
-        (*p).hitbox.hitbox.y + (*p).height > b.hitbox.hitbox.y && (*p).hitbox.hitbox.y + (*p).height <= b.hitbox.hitbox.y + SPEED_PLAYER_D)
-    {
-        (*p).hitbox.hitbox.y -= SPEED_PLAYER_D;
-        res = true;
-    }
-    /* BOT SIDE */
-    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
-        (*p).hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER && (*p).hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
-    {
-        (*p).hitbox.hitbox.y += SPEED_PLAYER;
-        res = true;
-    }
+        if ((*p).hitbox.hitbox.y + (*p).height > b.hitbox.hitbox.y && (*p).hitbox.hitbox.y + (*p).height <= b.hitbox.hitbox.y + SPEED_PLAYER_D)
+        {
+            (*p).hitbox.hitbox.y -= SPEED_PLAYER_D;
+            res = true;
+        }
+        /* BOT SIDE */
+        if ((*p).hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER && (*p).hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D)
+        {
+            (*p).hitbox.hitbox.y += SPEED_PLAYER;
+            res = true;
+        }
 
-    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH &&
-        (*p).hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D && (*p).hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2)
-    {
-        (*p).hitbox.hitbox.y += SPEED_PLAYER_D;
-        res = true;
+        if ((*p).hitbox.hitbox.y >= b.hitbox.hitbox.y + BLOCK_HEIGHT/2 - SPEED_PLAYER_D && (*p).hitbox.hitbox.y < b.hitbox.hitbox.y + BLOCK_HEIGHT/2)
+        {
+            (*p).hitbox.hitbox.y += SPEED_PLAYER_D;
+            res = true;
+        }
     }
     return res;
+}
+
+BOOL replace_projectile_block (struct Entity *p, struct Block b)
+{
+    /* TOP & BOT SIDE */
+    if ((*p).hitbox.hitbox.x + (*p).width > b.hitbox.hitbox.x && // LEFT
+        (*p).hitbox.hitbox.x <= b.hitbox.hitbox.x + BLOCK_WIDTH) // RIGHT
+    {
+        if ((*p).hitbox.hitbox.y + (*p).height/3 > b.hitbox.hitbox.y && (*p).hitbox.hitbox.y + (*p).height/2 < b.hitbox.hitbox.y + BLOCK_HEIGHT)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 VOID projectile_update (struct Weapon *w)
@@ -195,4 +208,12 @@ VOID create_new_projectile (struct Player *p)
             break;
         }
     }
+}
+
+VOID delete_projectile (struct Hitbox *tmp_hitbox, struct Entity *tmp_entity, struct Player *player, UINT j)
+{
+    initialize_hitbox(tmp_hitbox, sdl_r(-PROJECTILE_SIZE, -PROJECTILE_SIZE));
+    initialize_entity(tmp_entity, "ball.png",PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,HORIZONTAL,0,*tmp_hitbox);
+    player->weapons[j].entity = *tmp_entity;
+    player->weapons[j].is_created = false;
 }

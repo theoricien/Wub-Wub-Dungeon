@@ -164,20 +164,8 @@ INT main (INT argc, CHAR **argv)
         {
             for (UINT j = 0; j < NB_PROJECTILE; j++)
             {
-                if (replace_entity_block(&player.weapons[j].entity, block[i]))
-                {
-                    initialize_hitbox(&tmp_hitbox, sdl_r(-PROJECTILE_SIZE, -PROJECTILE_SIZE));
-                    initialize_entity(&tmp_entity, "ball.png",PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,HORIZONTAL,0,tmp_hitbox);
-                    player.weapons[j].entity = tmp_entity;
-                    player.weapons[j].is_created = false;
-                }
-                if (replace_entity(&player.weapons[j].entity))
-                {
-                    initialize_hitbox(&tmp_hitbox, sdl_r(-PROJECTILE_SIZE, -PROJECTILE_SIZE));
-                    initialize_entity(&tmp_entity, "ball.png",PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,PROJECTILE_SIZE,HORIZONTAL,0,tmp_hitbox);
-                    player.weapons[j].entity = tmp_entity;
-                    player.weapons[j].is_created = false;
-                }
+                if (replace_projectile_block(&player.weapons[j].entity, block[i]) || replace_entity(&player.weapons[j].entity))
+                    delete_projectile(&tmp_hitbox,&tmp_entity,&player,j);
             }
         }
 
